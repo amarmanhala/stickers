@@ -1,6 +1,6 @@
 # Cloudflare sticker source files
 
-Place the eight original PNG files in this directory using the filenames from
+Place the nine original PNG files in this directory using the filenames from
 `data/technologies/cloudflare/manifest.json`, then run:
 
 ```sh

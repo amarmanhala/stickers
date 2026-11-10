@@ -30,6 +30,12 @@
       "tags": ["crown", "confident", "success"]
     },
     {
+      "id": "waiting-on-dns",
+      "name": "Waiting on DNS",
+      "file": "waiting-on-dns.png",
+      "tags": ["deadpan", "waiting", "dns"]
+    },
+    {
       "id": "deploy-party",
       "name": "Deploy party",
       "file": "deploy-party.png",

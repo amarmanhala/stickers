@@ -137,7 +137,7 @@ function App() {
       <main>
         <section className="mx-auto flex min-h-[640px] w-full max-w-4xl flex-col items-center justify-center px-5 py-20 text-center sm:px-8 sm:py-28">
           <Badge color="warning" variant="soft" pill>
-            One tech · eight moods
+            One tech · nine moods
           </Badge>
 
           <h1 className="heading-4xl mt-7 max-w-3xl text-balance sm:heading-5xl">
@@ -217,7 +217,7 @@ function App() {
                 Pick your current cloud mood.
               </h2>
               <p className="mt-4 text-lg text-secondary">
-                Eight reactions, one technology. Search by feeling, incident, or
+                Nine reactions, one technology. Search by feeling, incident, or
                 the kind of day your deployment is having.
               </p>
             </div>
