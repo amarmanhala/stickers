@@ -7,7 +7,6 @@ import {
 } from '@openai/apps-sdk-ui/components/Button'
 import { Input } from '@openai/apps-sdk-ui/components/Input'
 import {
-  ArrowDown,
   ArrowUpRight,
   Check,
   Copy,
@@ -182,38 +181,18 @@ function App() {
       </header>
 
       <main>
-        <section className="mx-auto flex min-h-[640px] w-full max-w-4xl flex-col items-center justify-center px-5 py-20 text-center sm:px-8 sm:py-28">
-          <h1 className="heading-3xl max-w-2xl text-balance sm:heading-4xl">
+        <section className="mx-auto grid w-full max-w-6xl gap-6 px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-14 lg:grid-cols-2 lg:items-end lg:gap-16">
+          <h1 className="max-w-xl text-balance text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
             Your tech stack has feelings too.
           </h1>
-          <p className="mt-6 max-w-2xl text-balance text-lg text-secondary">
+          <p className="max-w-xl text-balance text-lg text-secondary lg:pb-1">
             Download expressive stickers for deploys, type errors, rerenders,
             clean builds, and every “why is production doing that?” moment.
           </p>
-
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink as="a" href="#stickers" color="primary" size="lg">
-              Browse stickers
-              <ArrowDown aria-hidden="true" />
-            </ButtonLink>
-            <ButtonLink
-              as="a"
-              href="https://github.com/amarmanhala/stickers"
-              target="_blank"
-              rel="noreferrer"
-              external
-              color="secondary"
-              variant="outline"
-              size="lg"
-            >
-              Follow the build
-              <ArrowUpRight aria-hidden="true" />
-            </ButtonLink>
-          </div>
         </section>
 
         <section id="stickers" className="scroll-mt-2">
-          <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-12">
+          <div className="mx-auto w-full max-w-6xl px-5 pb-7 sm:px-8 sm:pb-9">
             <div className="flex flex-wrap gap-2" aria-label="Sticker collections">
               {technologies.map((technology) => {
                 const selected = technology.id === selectedTechnology
