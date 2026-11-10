@@ -1,0 +1,63 @@
+{
+  "technology": {
+    "id": "typescript",
+    "name": "TypeScript",
+    "description": "Typed reactions for clean builds, confusing errors, strict mode wins, and compiler meltdowns."
+  },
+  "stickers": [
+    {
+      "id": "typescript-party",
+      "name": "TypeScript party",
+      "file": "typescript-party.png",
+      "tags": ["party", "celebration", "build passed"]
+    },
+    {
+      "id": "peace-love-types",
+      "name": "Peace, love & types",
+      "file": "peace-love-types.png",
+      "tags": ["peace", "happy", "types"]
+    },
+    {
+      "id": "what-type-is-this",
+      "name": "What type is this?",
+      "file": "what-type-is-this.png",
+      "tags": ["confused", "question", "debugging"]
+    },
+    {
+      "id": "strictly-cool",
+      "name": "Strictly cool",
+      "file": "strictly-cool.png",
+      "tags": ["sunglasses", "cool", "strict mode"]
+    },
+    {
+      "id": "no-comment",
+      "name": "No comment",
+      "file": "no-comment.png",
+      "tags": ["deadpan", "shrug", "review"]
+    },
+    {
+      "id": "ship-it",
+      "name": "Ship it",
+      "file": "ship-it.png",
+      "tags": ["rocket", "deploy", "launch"]
+    },
+    {
+      "id": "type-checking-you",
+      "name": "Type checking you",
+      "file": "type-checking-you.png",
+      "tags": ["skeptical", "side eye", "type check"]
+    },
+    {
+      "id": "type-confidence",
+      "name": "Type confidence",
+      "file": "type-confidence.png",
+      "tags": ["smug", "confident", "inference"]
+    },
+    {
+      "id": "compile-time-meltdown",
+      "name": "Compile-time meltdown",
+      "file": "compile-time-meltdown.png",
+      "tags": ["crying", "compiler", "error"]
+    }
+  ]
+}

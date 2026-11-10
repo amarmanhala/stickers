@@ -18,7 +18,27 @@ import {
 } from '@openai/apps-sdk-ui/components/Icon'
 
 const installCommand = 'npm install @amarmanhala/stickers'
-const collectionEndpoint = '/api/technologies/cloudflare/stickers'
+
+const technologies = [
+  {
+    id: 'cloudflare',
+    name: 'Cloudflare',
+    shortDescription: 'Deploys, cache hits, incidents, and edge moods.',
+    searchPlaceholder: 'Search deploy, cache, outage…',
+  },
+  {
+    id: 'typescript',
+    name: 'TypeScript',
+    shortDescription: 'Types, compiler errors, strict mode, and build wins.',
+    searchPlaceholder: 'Search compiler, strict, types…',
+  },
+  {
+    id: 'react',
+    name: 'React',
+    shortDescription: 'Components, hooks, rerenders, and stateful moods.',
+    searchPlaceholder: 'Search hooks, props, render…',
+  },
+] as const
 
 interface Sticker {
   id: string
@@ -40,15 +60,18 @@ interface StickerCollection {
 
 function App() {
   const [query, setQuery] = useState('')
+  const [selectedTechnology, setSelectedTechnology] = useState('cloudflare')
   const [collection, setCollection] = useState<StickerCollection | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
+    const collectionEndpoint = `/api/technologies/${selectedTechnology}/stickers`
 
     async function loadCollection() {
       setLoadError(null)
+      setCollection(null)
 
       try {
         const response = await fetch(collectionEndpoint, {
@@ -73,7 +96,11 @@ function App() {
 
     void loadCollection()
     return () => controller.abort()
-  }, [reloadKey])
+  }, [reloadKey, selectedTechnology])
+
+  const activeTechnology =
+    technologies.find((technology) => technology.id === selectedTechnology) ??
+    technologies[0]
 
   const filteredStickers = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
@@ -137,20 +164,20 @@ function App() {
       <main>
         <section className="mx-auto flex min-h-[640px] w-full max-w-4xl flex-col items-center justify-center px-5 py-20 text-center sm:px-8 sm:py-28">
           <Badge color="warning" variant="soft" pill>
-            One tech · nine moods
+            Three techs · twenty-seven moods
           </Badge>
 
           <h1 className="heading-4xl mt-7 max-w-3xl text-balance sm:heading-5xl">
-            Cloudflare, but make it emotional.
+            Your tech stack has feelings too.
           </h1>
           <p className="mt-6 max-w-2xl text-balance text-lg text-secondary">
-            A tiny orange cloud for every deploy, cache hit, outage, and
-            “why is production doing that?” moment.
+            Download expressive stickers for deploys, type errors, rerenders,
+            clean builds, and every “why is production doing that?” moment.
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <ButtonLink as="a" href="#stickers" color="primary" size="lg">
-              Meet the clouds
+              Browse stickers
               <ArrowDown aria-hidden="true" />
             </ButtonLink>
             <ButtonLink
@@ -170,16 +197,16 @@ function App() {
 
           <div
             className="mt-14 flex flex-wrap items-center justify-center gap-3"
-            aria-label="Cloudflare technologies"
+            aria-label="Sticker technologies"
           >
             <span className="-rotate-3 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-orange-600 shadow-md">
-              Workers
+              Cloudflare
             </span>
-            <span className="rotate-2 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-orange-600 shadow-md">
-              R2
+            <span className="rotate-2 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-blue-600 shadow-md">
+              TypeScript
             </span>
-            <span className="-rotate-1 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-orange-600 shadow-md">
-              Pages
+            <span className="-rotate-1 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-cyan-600 shadow-md">
+              React
             </span>
           </div>
         </section>
@@ -187,9 +214,9 @@ function App() {
         <section className="border-y border-subtle bg-surface-secondary">
           <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-12 sm:grid-cols-3 sm:px-8 sm:py-16">
             <div>
-              <p className="font-medium">One Cloudflare collection</p>
+              <p className="font-medium">Organized by technology</p>
               <p className="mt-2 text-sm text-secondary">
-                Every sticker is grouped under the same technology, ready to grow.
+                Every sticker belongs to a focused collection that is easy to browse.
               </p>
             </div>
             <div>
@@ -211,15 +238,35 @@ function App() {
           <div className="mx-auto w-full max-w-6xl px-5 pb-4 pt-20 sm:px-8 sm:pt-24">
             <div className="max-w-2xl">
               <Badge color="warning" variant="soft" pill>
-                Cloudflare collection
+                {activeTechnology.name} collection
               </Badge>
               <h2 className="heading-3xl mt-5 text-balance sm:heading-4xl">
-                Pick your current cloud mood.
+                Pick your current tech mood.
               </h2>
               <p className="mt-4 text-lg text-secondary">
-                Nine reactions, one technology. Search by feeling, incident, or
-                the kind of day your deployment is having.
+                {activeTechnology.shortDescription} Choose a collection, then
+                search by feeling or engineering moment.
               </p>
+              <div className="mt-7 flex flex-wrap gap-2" aria-label="Sticker collections">
+                {technologies.map((technology) => {
+                  const selected = technology.id === selectedTechnology
+
+                  return (
+                    <Button
+                      key={technology.id}
+                      color={selected ? 'primary' : 'secondary'}
+                      variant={selected ? 'solid' : 'outline'}
+                      onClick={() => {
+                        setSelectedTechnology(technology.id)
+                        setQuery('')
+                      }}
+                      aria-pressed={selected}
+                    >
+                      {technology.name}
+                    </Button>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
@@ -229,15 +276,15 @@ function App() {
                 className="w-full sm:max-w-md"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search deploy, cache, outage…"
-                aria-label="Search Cloudflare stickers"
+                placeholder={activeTechnology.searchPlaceholder}
+                aria-label={`Search ${activeTechnology.name} stickers`}
                 startAdornment={<Search className="size-4" aria-hidden="true" />}
                 size="lg"
                 pill
               />
               <div className="flex items-center justify-between gap-3 sm:ml-auto sm:justify-end">
-                <Badge color="warning" variant="soft" pill>
-                  Cloudflare
+                <Badge color="info" variant="soft" pill>
+                  {activeTechnology.name}
                 </Badge>
                 <span className="text-sm text-secondary" aria-live="polite">
                   {filteredStickers.length} result{filteredStickers.length === 1 ? '' : 's'}
@@ -260,9 +307,10 @@ function App() {
             ) : loadError ? (
               <div className="grid min-h-80 place-items-center rounded-3xl border border-dashed border-default bg-surface-secondary px-6 text-center">
                 <div>
-                  <p className="heading-lg">The cloud shelf is unavailable</p>
+                  <p className="heading-lg">The sticker shelf is unavailable</p>
                   <p className="mt-2 max-w-md text-secondary">
-                    The Cloudflare R2 collection could not be loaded. {loadError}.
+                    The {activeTechnology.name} R2 collection could not be loaded.{' '}
+                    {loadError}.
                   </p>
                   <Button
                     className="mt-5"
@@ -285,7 +333,7 @@ function App() {
                       <img
                         className="h-full w-full object-contain transition duration-basic group-hover:scale-[1.03]"
                         src={sticker.imageUrl}
-                        alt={`${sticker.name} Cloudflare sticker`}
+                        alt={`${sticker.name} ${collection?.technology.name ?? activeTechnology.name} sticker`}
                         loading="lazy"
                       />
                     </div>
@@ -293,7 +341,7 @@ function App() {
                       <div className="min-w-0">
                         <h3 className="truncate font-medium">{sticker.name}</h3>
                         <p className="mt-0.5 text-sm text-secondary">
-                          {collection?.technology.name ?? 'Cloudflare'}
+                          {collection?.technology.name ?? activeTechnology.name}
                         </p>
                       </div>
                       <ButtonLink
@@ -314,9 +362,9 @@ function App() {
             ) : (
               <div className="grid min-h-80 place-items-center rounded-3xl border border-dashed border-default bg-surface-secondary px-6 text-center">
                 <div>
-                  <p className="heading-lg">No cloud mood found</p>
+                  <p className="heading-lg">No tech mood found</p>
                   <p className="mt-2 text-secondary">
-                    Try another feeling, event, or Cloudflare term.
+                    Try another feeling, event, or technology term.
                   </p>
                 </div>
               </div>
@@ -330,7 +378,7 @@ function App() {
               npm package coming later
             </Badge>
             <h2 className="heading-3xl mt-5 text-balance sm:heading-4xl">
-              One command. The whole cloud crew.
+              One command. The whole tech crew.
             </h2>
             <p className="mt-4 max-w-xl text-secondary">
               The package is not published yet, but the install flow is ready for

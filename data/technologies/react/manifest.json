@@ -1,0 +1,63 @@
+{
+  "technology": {
+    "id": "react",
+    "name": "React",
+    "description": "Component reactions for rerenders, hook confusion, prop suspicion, and state management wins."
+  },
+  "stickers": [
+    {
+      "id": "render-meltdown",
+      "name": "Render meltdown",
+      "file": "render-meltdown.png",
+      "tags": ["crying", "render", "error"]
+    },
+    {
+      "id": "which-hook",
+      "name": "Which hook?",
+      "file": "which-hook.png",
+      "tags": ["confused", "hooks", "question"]
+    },
+    {
+      "id": "ship-the-component",
+      "name": "Ship the component",
+      "file": "ship-the-component.png",
+      "tags": ["rocket", "deploy", "component"]
+    },
+    {
+      "id": "state-mastered",
+      "name": "State mastered",
+      "file": "state-mastered.png",
+      "tags": ["smug", "state", "success"]
+    },
+    {
+      "id": "suspicious-props",
+      "name": "Suspicious props",
+      "file": "suspicious-props.png",
+      "tags": ["side eye", "props", "thinking"]
+    },
+    {
+      "id": "another-rerender",
+      "name": "Another rerender",
+      "file": "another-rerender.png",
+      "tags": ["unimpressed", "shrug", "rerender"]
+    },
+    {
+      "id": "hook-happy",
+      "name": "Hook happy",
+      "file": "hook-happy.png",
+      "tags": ["peace", "silly", "hooks"]
+    },
+    {
+      "id": "react-mode",
+      "name": "React mode",
+      "file": "react-mode.png",
+      "tags": ["sunglasses", "cool", "frontend"]
+    },
+    {
+      "id": "component-love",
+      "name": "Component love",
+      "file": "component-love.png",
+      "tags": ["heart", "party", "component"]
+    }
+  ]
+}
