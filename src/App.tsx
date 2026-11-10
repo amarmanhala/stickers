@@ -275,18 +275,18 @@ function App() {
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredStickers.map((sticker) => (
                   <article
-                    className="group transition duration-basic hover:-translate-y-0.5"
+                    className="transition duration-basic hover:-translate-y-0.5"
                     key={`${sticker.technology}:${sticker.id}`}
                   >
-                    <div className="grid aspect-[4/3] place-items-center overflow-hidden p-5">
+                    <div className="grid aspect-square place-items-center p-6 sm:p-8">
                       <img
-                        className="h-full w-full object-contain transition duration-basic group-hover:scale-[1.03]"
+                        className="h-full w-full object-contain"
                         src={sticker.imageUrl}
                         alt={`${sticker.name} ${sticker.technology} sticker`}
                         loading="lazy"
                       />
                     </div>
-                    <div className="flex flex-col items-center gap-1 px-5 pb-2 pt-2 text-center">
+                    <div className="flex flex-col items-center gap-1 px-5 pb-2 pt-4 text-center">
                       <h3 className="w-full truncate font-mono text-sm font-medium">
                         {sticker.name}
                       </h3>
