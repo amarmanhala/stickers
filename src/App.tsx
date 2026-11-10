@@ -22,17 +22,14 @@ const technologies = [
   {
     id: 'cloudflare',
     name: 'Cloudflare',
-    searchPlaceholder: 'Search deploy, cache, outage…',
   },
   {
     id: 'typescript',
     name: 'TypeScript',
-    searchPlaceholder: 'Search compiler, strict, types…',
   },
   {
     id: 'react',
     name: 'React',
-    searchPlaceholder: 'Search hooks, props, render…',
   },
 ] as const
 
@@ -56,42 +53,50 @@ interface StickerCollection {
 
 function App() {
   const [query, setQuery] = useState('')
-  const [selectedTechnology, setSelectedTechnology] = useState('cloudflare')
-  const [collection, setCollection] = useState<StickerCollection | null>(null)
+  const [selectedTechnology, setSelectedTechnology] = useState('all')
+  const [collections, setCollections] = useState<StickerCollection[]>([])
   const [starCount, setStarCount] = useState<number | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
-    const collectionEndpoint = `/api/technologies/${selectedTechnology}/stickers`
 
-    async function loadCollection() {
+    async function loadCollections() {
       setLoadError(null)
-      setCollection(null)
+      setCollections([])
 
       try {
-        const response = await fetch(collectionEndpoint, {
-          signal: controller.signal,
-        })
+        const technologyIds =
+          selectedTechnology === 'all'
+            ? technologies.map((technology) => technology.id)
+            : [selectedTechnology]
+        const nextCollections = await Promise.all(
+          technologyIds.map(async (technology) => {
+            const response = await fetch(
+              `/api/technologies/${technology}/stickers`,
+              { signal: controller.signal },
+            )
 
-        if (!response.ok) {
-          throw new Error(`Sticker API returned ${response.status}`)
-        }
+            if (!response.ok) {
+              throw new Error(`Sticker API returned ${response.status}`)
+            }
 
-        const nextCollection = (await response.json()) as StickerCollection
-        setCollection(nextCollection)
+            return (await response.json()) as StickerCollection
+          }),
+        )
+        setCollections(nextCollections)
       } catch (error) {
         if (controller.signal.aborted) return
 
-        setCollection(null)
+        setCollections([])
         setLoadError(
           error instanceof Error ? error.message : 'Could not load stickers',
         )
       }
     }
 
-    void loadCollection()
+    void loadCollections()
     return () => controller.abort()
   }, [reloadKey, selectedTechnology])
 
@@ -117,24 +122,20 @@ function App() {
     return () => controller.abort()
   }, [])
 
-  const activeTechnology =
-    technologies.find((technology) => technology.id === selectedTechnology) ??
-    technologies[0]
-
   const filteredStickers = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
-    const stickers = collection?.stickers ?? []
+    const stickers = collections.flatMap((collection) => collection.stickers)
 
     if (!normalizedQuery) {
       return stickers
     }
 
     return stickers.filter((sticker) =>
-      `${sticker.name} ${sticker.tags.join(' ')}`
+      `${sticker.name} ${sticker.technology} ${sticker.tags.join(' ')}`
         .toLowerCase()
         .includes(normalizedQuery),
     )
-  }, [collection, query])
+  }, [collections, query])
 
   return (
     <div className="min-h-screen bg-surface text-primary">
@@ -181,65 +182,52 @@ function App() {
       </header>
 
       <main>
-        <section className="mx-auto grid w-full max-w-6xl gap-6 px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-14 lg:grid-cols-2 lg:items-end lg:gap-16">
+        <section className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-12 pt-10 text-center sm:px-8 sm:pb-16 sm:pt-14">
           <h1 className="max-w-xl text-balance text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
             Your tech stack has feelings too.
           </h1>
-          <p className="max-w-xl text-balance text-lg text-secondary lg:pb-1">
+          <p className="mt-5 max-w-2xl text-balance text-lg text-secondary">
             Download expressive stickers for deploys, type errors, rerenders,
             clean builds, and every “why is production doing that?” moment.
           </p>
         </section>
 
         <section id="stickers" className="scroll-mt-2">
-          <div className="mx-auto w-full max-w-6xl px-5 pb-7 sm:px-8 sm:pb-9">
-            <div className="flex flex-wrap gap-2" aria-label="Sticker collections">
-              {technologies.map((technology) => {
-                const selected = technology.id === selectedTechnology
-
-                return (
-                  <Button
-                    key={technology.id}
-                    color={selected ? 'primary' : 'secondary'}
-                    variant={selected ? 'solid' : 'outline'}
-                    onClick={() => {
-                      setSelectedTechnology(technology.id)
-                      setQuery('')
-                    }}
-                    aria-pressed={selected}
-                  >
-                    {technology.name}
-                  </Button>
-                )
-              })}
-            </div>
-          </div>
-
           <div className="sticky top-0 z-20 border-y border-subtle bg-surface/95 backdrop-blur-xl">
             <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:px-8">
               <Input
-                className="w-full sm:max-w-md"
+                className="w-full sm:max-w-lg"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder={activeTechnology.searchPlaceholder}
-                aria-label={`Search ${activeTechnology.name} stickers`}
+                placeholder="Search stickers…"
+                aria-label="Search stickers"
                 startAdornment={<Search className="size-4" aria-hidden="true" />}
                 size="lg"
                 pill
               />
-              <div className="flex items-center justify-between gap-3 sm:ml-auto sm:justify-end">
-                <Badge color="info" variant="soft" pill>
-                  {activeTechnology.name}
-                </Badge>
-                <span className="text-sm text-secondary" aria-live="polite">
-                  {filteredStickers.length} result{filteredStickers.length === 1 ? '' : 's'}
-                </span>
-              </div>
+              <label className="sm:ml-auto">
+                <span className="sr-only">Sticker category</span>
+                <select
+                  className="h-10 w-full rounded-full border border-default bg-surface px-4 text-sm font-medium text-primary outline-none transition focus:border-strong sm:w-44"
+                  value={selectedTechnology}
+                  onChange={(event) => {
+                    setSelectedTechnology(event.target.value)
+                    setQuery('')
+                  }}
+                >
+                  <option value="all">All technologies</option>
+                  {technologies.map((technology) => (
+                    <option key={technology.id} value={technology.id}>
+                      {technology.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
           </div>
 
           <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-12">
-            {!collection && !loadError ? (
+            {collections.length === 0 && !loadError ? (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 6 }, (_, index) => (
                   <div
@@ -254,8 +242,7 @@ function App() {
                 <div>
                   <p className="heading-lg">The sticker shelf is unavailable</p>
                   <p className="mt-2 max-w-md text-secondary">
-                    The {activeTechnology.name} R2 collection could not be loaded.{' '}
-                    {loadError}.
+                    The R2 sticker collections could not be loaded. {loadError}.
                   </p>
                   <Button
                     className="mt-5"
@@ -272,13 +259,13 @@ function App() {
                 {filteredStickers.map((sticker) => (
                   <article
                     className="group transition duration-basic hover:-translate-y-0.5"
-                    key={sticker.id}
+                    key={`${sticker.technology}:${sticker.id}`}
                   >
                     <div className="grid aspect-[4/3] place-items-center overflow-hidden p-5">
                       <img
                         className="h-full w-full object-contain transition duration-basic group-hover:scale-[1.03]"
                         src={sticker.imageUrl}
-                        alt={`${sticker.name} ${collection?.technology.name ?? activeTechnology.name} sticker`}
+                        alt={`${sticker.name} ${sticker.technology} sticker`}
                         loading="lazy"
                       />
                     </div>
