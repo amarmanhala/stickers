@@ -455,13 +455,10 @@ function StickerDetailPage() {
               </ButtonLink>
 
               <div className="mt-10 border-t border-subtle pt-10">
-                <p className="font-mono text-sm text-secondary">
-                  {technologyName}
-                </p>
-                <h1 className="heading-3xl mt-3 text-balance sm:heading-4xl">
+                <h1 className="text-balance font-mono text-xl font-medium sm:text-2xl">
                   {sticker.name}
                 </h1>
-                <p className="mx-auto mt-4 max-w-2xl text-balance text-secondary">
+                <p className="mx-auto mt-3 max-w-2xl text-balance font-mono text-sm leading-6 text-secondary">
                   {sticker.name} is a {technologyName} reaction
                   sticker for {sticker.tags.join(', ')}.
                 </p>
@@ -496,17 +493,9 @@ function StickerDetailPage() {
             </section>
 
             <section className="mt-20 border-t border-subtle pt-12">
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="font-mono text-sm text-secondary">
-                    {technologyName}
-                  </p>
-                  <h2 className="heading-2xl mt-2">More from this collection</h2>
-                </div>
-                <Link className="text-sm text-secondary hover:text-primary" to="/">
-                  View all
-                </Link>
-              </div>
+              <h2 className="font-mono text-base font-medium">
+                More from this collection
+              </h2>
 
               <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {relatedStickers.map((relatedSticker) => (
