@@ -35,6 +35,38 @@ const jsonResponse = (body: unknown, status = 200) =>
 
 const isSafeSegment = (value: string) => /^[a-z0-9][a-z0-9.-]*$/.test(value)
 
+async function handleGitHubStars() {
+  try {
+    const response = await fetch(
+      'https://api.github.com/repos/amarmanhala/stickers',
+      {
+        headers: {
+          Accept: 'application/vnd.github+json',
+          'User-Agent': 'amarmanhala-stickers',
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+        cf: {
+          cacheEverything: true,
+          cacheTtl: 300,
+        },
+      },
+    )
+
+    if (!response.ok) {
+      return jsonResponse({ error: 'GitHub stars unavailable' }, 502)
+    }
+
+    const repository = (await response.json()) as { stargazers_count: number }
+
+    return Response.json(
+      { stars: repository.stargazers_count },
+      { headers: { 'Cache-Control': 'public, max-age=300' } },
+    )
+  } catch {
+    return jsonResponse({ error: 'GitHub stars unavailable' }, 502)
+  }
+}
+
 async function getManifest(env: Env, technology: string) {
   const object = await env.STICKERS_BUCKET.get(manifestKey(technology))
 
@@ -106,6 +138,10 @@ export default {
 
     if (request.method === 'GET' && url.pathname === '/api/health') {
       return jsonResponse({ ok: true, storage: 'r2' })
+    }
+
+    if (request.method === 'GET' && url.pathname === '/api/github/stars') {
+      return handleGitHubStars()
     }
 
     if (

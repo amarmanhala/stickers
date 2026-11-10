@@ -59,6 +59,7 @@ function App() {
   const [query, setQuery] = useState('')
   const [selectedTechnology, setSelectedTechnology] = useState('cloudflare')
   const [collection, setCollection] = useState<StickerCollection | null>(null)
+  const [starCount, setStarCount] = useState<number | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
 
@@ -94,6 +95,28 @@ function App() {
     void loadCollection()
     return () => controller.abort()
   }, [reloadKey, selectedTechnology])
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    async function loadStarCount() {
+      try {
+        const response = await fetch('/api/github/stars', {
+          signal: controller.signal,
+        })
+
+        if (!response.ok) return
+
+        const data = (await response.json()) as { stars: number }
+        setStarCount(data.stars)
+      } catch {
+        // The GitHub link remains usable if the count is temporarily unavailable.
+      }
+    }
+
+    void loadStarCount()
+    return () => controller.abort()
+  }, [])
 
   const activeTechnology =
     technologies.find((technology) => technology.id === selectedTechnology) ??
@@ -153,18 +176,14 @@ function App() {
             size="sm"
           >
             <Star aria-hidden="true" />
-            Star
+            {starCount === null ? 'Star' : starCount.toLocaleString()}
           </ButtonLink>
         </nav>
       </header>
 
       <main>
         <section className="mx-auto flex min-h-[640px] w-full max-w-4xl flex-col items-center justify-center px-5 py-20 text-center sm:px-8 sm:py-28">
-          <Badge color="warning" variant="soft" pill>
-            Three techs · twenty-seven moods
-          </Badge>
-
-          <h1 className="heading-4xl mt-7 max-w-3xl text-balance sm:heading-5xl">
+          <h1 className="heading-3xl max-w-2xl text-balance sm:heading-4xl">
             Your tech stack has feelings too.
           </h1>
           <p className="mt-6 max-w-2xl text-balance text-lg text-secondary">
@@ -190,21 +209,6 @@ function App() {
               Follow the build
               <ArrowUpRight aria-hidden="true" />
             </ButtonLink>
-          </div>
-
-          <div
-            className="mt-14 flex flex-wrap items-center justify-center gap-3"
-            aria-label="Sticker technologies"
-          >
-            <span className="-rotate-3 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-orange-600 shadow-md">
-              Cloudflare
-            </span>
-            <span className="rotate-2 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-blue-600 shadow-md">
-              TypeScript
-            </span>
-            <span className="-rotate-1 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-cyan-600 shadow-md">
-              React
-            </span>
           </div>
         </section>
 
@@ -288,10 +292,10 @@ function App() {
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredStickers.map((sticker) => (
                   <article
-                    className="group rounded-3xl border border-subtle bg-surface p-3 shadow-sm transition duration-basic hover:-translate-y-0.5 hover:shadow-md"
+                    className="group transition duration-basic hover:-translate-y-0.5"
                     key={sticker.id}
                   >
-                    <div className="grid aspect-[4/3] place-items-center overflow-hidden rounded-2xl bg-surface-secondary p-5">
+                    <div className="grid aspect-[4/3] place-items-center overflow-hidden p-5">
                       <img
                         className="h-full w-full object-contain transition duration-basic group-hover:scale-[1.03]"
                         src={sticker.imageUrl}
@@ -299,13 +303,10 @@ function App() {
                         loading="lazy"
                       />
                     </div>
-                    <div className="flex items-center justify-between gap-3 px-2 pb-2 pt-4">
-                      <div className="min-w-0">
-                        <h3 className="truncate font-medium">{sticker.name}</h3>
-                        <p className="mt-0.5 text-sm text-secondary">
-                          {collection?.technology.name ?? activeTechnology.name}
-                        </p>
-                      </div>
+                    <div className="flex items-center justify-between gap-3 px-5 pb-2 pt-2">
+                      <h3 className="min-w-0 truncate font-medium">
+                        {sticker.name}
+                      </h3>
                       <ButtonLink
                         as="a"
                         href={sticker.imageUrl}
@@ -313,9 +314,9 @@ function App() {
                         color="secondary"
                         variant="ghost"
                         size="sm"
+                        aria-label={`Download ${sticker.name}`}
                       >
                         <Download aria-hidden="true" />
-                        Download
                       </ButtonLink>
                     </div>
                   </article>
