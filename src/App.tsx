@@ -23,19 +23,16 @@ const technologies = [
   {
     id: 'cloudflare',
     name: 'Cloudflare',
-    shortDescription: 'Deploys, cache hits, incidents, and edge moods.',
     searchPlaceholder: 'Search deploy, cache, outage…',
   },
   {
     id: 'typescript',
     name: 'TypeScript',
-    shortDescription: 'Types, compiler errors, strict mode, and build wins.',
     searchPlaceholder: 'Search compiler, strict, types…',
   },
   {
     id: 'react',
     name: 'React',
-    shortDescription: 'Components, hooks, rerenders, and stateful moods.',
     searchPlaceholder: 'Search hooks, props, render…',
   },
 ] as const
@@ -211,62 +208,27 @@ function App() {
           </div>
         </section>
 
-        <section className="border-y border-subtle bg-surface-secondary">
-          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-12 sm:grid-cols-3 sm:px-8 sm:py-16">
-            <div>
-              <p className="font-medium">Organized by technology</p>
-              <p className="mt-2 text-sm text-secondary">
-                Every sticker belongs to a focused collection that is easy to browse.
-              </p>
-            </div>
-            <div>
-              <p className="font-medium">Stored in R2</p>
-              <p className="mt-2 text-sm text-secondary">
-                Original files live in object storage under a clear collection path.
-              </p>
-            </div>
-            <div>
-              <p className="font-medium">Served by Workers</p>
-              <p className="mt-2 text-sm text-secondary">
-                The catalog and images arrive through a small edge API.
-              </p>
-            </div>
-          </div>
-        </section>
-
         <section id="stickers" className="scroll-mt-2">
-          <div className="mx-auto w-full max-w-6xl px-5 pb-4 pt-20 sm:px-8 sm:pt-24">
-            <div className="max-w-2xl">
-              <Badge color="warning" variant="soft" pill>
-                {activeTechnology.name} collection
-              </Badge>
-              <h2 className="heading-3xl mt-5 text-balance sm:heading-4xl">
-                Pick your current tech mood.
-              </h2>
-              <p className="mt-4 text-lg text-secondary">
-                {activeTechnology.shortDescription} Choose a collection, then
-                search by feeling or engineering moment.
-              </p>
-              <div className="mt-7 flex flex-wrap gap-2" aria-label="Sticker collections">
-                {technologies.map((technology) => {
-                  const selected = technology.id === selectedTechnology
+          <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-12">
+            <div className="flex flex-wrap gap-2" aria-label="Sticker collections">
+              {technologies.map((technology) => {
+                const selected = technology.id === selectedTechnology
 
-                  return (
-                    <Button
-                      key={technology.id}
-                      color={selected ? 'primary' : 'secondary'}
-                      variant={selected ? 'solid' : 'outline'}
-                      onClick={() => {
-                        setSelectedTechnology(technology.id)
-                        setQuery('')
-                      }}
-                      aria-pressed={selected}
-                    >
-                      {technology.name}
-                    </Button>
-                  )
-                })}
-              </div>
+                return (
+                  <Button
+                    key={technology.id}
+                    color={selected ? 'primary' : 'secondary'}
+                    variant={selected ? 'solid' : 'outline'}
+                    onClick={() => {
+                      setSelectedTechnology(technology.id)
+                      setQuery('')
+                    }}
+                    aria-pressed={selected}
+                  >
+                    {technology.name}
+                  </Button>
+                )
+              })}
             </div>
           </div>
 
