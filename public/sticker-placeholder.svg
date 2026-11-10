@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360" fill="none">
+  <title>Placeholder smiling sticker</title>
+  <defs>
+    <filter id="shadow" x="30" y="20" width="310" height="330" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)" transform="rotate(-4 180 180)">
+    <path d="M181 31C244 31 301 74 318 135C335 197 308 264 253 300C198 336 123 324 82 274C41 225 39 152 79 100C104 67 140 31 181 31Z" fill="white"/>
+    <path d="M181 31C244 31 301 74 318 135C335 197 308 264 253 300C198 336 123 324 82 274C41 225 39 152 79 100C104 67 140 31 181 31Z" stroke="#111" stroke-width="7"/>
+    <circle cx="139" cy="160" r="10" fill="#111"/>
+    <circle cx="224" cy="160" r="10" fill="#111"/>
+    <path d="M130 207C145 228 167 239 190 237C214 235 234 221 244 199" stroke="#111" stroke-width="9" stroke-linecap="round"/>
+    <path d="M111 114C126 102 143 98 158 102" stroke="#111" stroke-width="7" stroke-linecap="round"/>
+    <path d="M208 101C224 97 241 103 253 115" stroke="#111" stroke-width="7" stroke-linecap="round"/>
+    <path d="M270 77L276 92L291 98L276 104L270 119L264 104L249 98L264 92L270 77Z" fill="#9B6CFF"/>
+    <path d="M93 246L98 257L109 262L98 267L93 278L88 267L77 262L88 257L93 246Z" fill="#FFB84D"/>
+  </g>
+</svg>
