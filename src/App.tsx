@@ -286,8 +286,8 @@ function App() {
                         loading="lazy"
                       />
                     </div>
-                    <div className="flex items-center justify-between gap-3 px-5 pb-2 pt-2">
-                      <h3 className="min-w-0 truncate font-medium">
+                    <div className="flex flex-col items-center gap-1 px-5 pb-2 pt-2 text-center">
+                      <h3 className="w-full truncate font-mono text-sm font-medium">
                         {sticker.name}
                       </h3>
                       <ButtonLink
@@ -317,7 +317,6 @@ function App() {
             )}
           </div>
         </section>
-
       </main>
 
       <footer className="border-t border-subtle">
