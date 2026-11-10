@@ -7,8 +7,6 @@ import {
 import { Input } from '@openai/apps-sdk-ui/components/Input'
 import {
   ArrowUpRight,
-  Check,
-  Copy,
   Download,
   Search,
   SimpleSmile,
@@ -186,8 +184,8 @@ function App() {
             Your tech stack has feelings too.
           </h1>
           <p className="mt-5 max-w-2xl text-balance font-mono text-sm leading-6 text-secondary">
-            Download expressive stickers for deploys, type errors, rerenders,
-            clean builds, and every “why is production doing that?” moment.
+            Expressive stickers for every deploy, type error, rerender, and clean
+            build.
           </p>
           <div className="mt-7 flex w-full max-w-2xl flex-col items-center justify-center gap-3 sm:flex-row">
             <ButtonLink as="a" href="#stickers" color="primary" size="lg">
@@ -206,15 +204,7 @@ function App() {
                 size="lg"
                 uniform
                 aria-label="Copy npm install command"
-              >
-                {({ copied }) =>
-                  copied ? (
-                    <Check aria-hidden="true" />
-                  ) : (
-                    <Copy aria-hidden="true" />
-                  )
-                }
-              </CopyButton>
+              />
             </div>
           </div>
         </section>
