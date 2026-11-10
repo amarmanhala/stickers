@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Badge } from '@openai/apps-sdk-ui/components/Badge'
 import {
+  Button,
   ButtonLink,
   CopyButton,
 } from '@openai/apps-sdk-ui/components/Button'
@@ -10,116 +11,84 @@ import {
   ArrowUpRight,
   Check,
   Copy,
+  Download,
   Search,
   SimpleSmile,
   Star,
 } from '@openai/apps-sdk-ui/components/Icon'
 
 const installCommand = 'npm install @amarmanhala/stickers'
+const collectionEndpoint = '/api/technologies/cloudflare/stickers'
 
-const stickers = [
-  {
-    name: 'React',
-    displayName: 'React',
-    category: 'Library',
-    color: 'text-blue-500',
-    tilt: '-rotate-2',
-  },
-  {
-    name: 'Angular',
-    displayName: 'Angular',
-    category: 'Framework',
-    color: 'text-red-600',
-    tilt: 'rotate-2',
-  },
-  {
-    name: 'Vue',
-    displayName: 'Vue.js',
-    category: 'Framework',
-    color: 'text-green-600',
-    tilt: '-rotate-1',
-  },
-  {
-    name: 'Svelte',
-    displayName: 'Svelte',
-    category: 'Framework',
-    color: 'text-orange-600',
-    tilt: 'rotate-2',
-  },
-  {
-    name: 'TypeScript',
-    displayName: 'TypeScript',
-    category: 'Language',
-    color: 'text-blue-700',
-    tilt: 'rotate-1',
-  },
-  {
-    name: 'JavaScript',
-    displayName: '{ JavaScript }',
-    category: 'Language',
-    color: 'text-yellow-800',
-    tilt: '-rotate-2',
-  },
-  {
-    name: 'Next.js',
-    displayName: 'next.js',
-    category: 'Framework',
-    color: 'text-black',
-    tilt: '-rotate-1',
-  },
-  {
-    name: 'Node.js',
-    displayName: 'node.js',
-    category: 'Runtime',
-    color: 'text-green-700',
-    tilt: 'rotate-2',
-  },
-  {
-    name: 'Tailwind CSS',
-    displayName: 'tailwindcss',
-    category: 'Tool',
-    color: 'text-cyan-600',
-    tilt: 'rotate-1',
-  },
-  {
-    name: 'Python',
-    displayName: 'Python',
-    category: 'Language',
-    color: 'text-blue-600',
-    tilt: '-rotate-2',
-  },
-  {
-    name: 'Rust',
-    displayName: 'Rust',
-    category: 'Language',
-    color: 'text-orange-800',
-    tilt: 'rotate-2',
-  },
-  {
-    name: 'Go',
-    displayName: 'Go',
-    category: 'Language',
-    color: 'text-cyan-700',
-    tilt: '-rotate-1',
-  },
-]
+interface Sticker {
+  id: string
+  name: string
+  file: string
+  tags: string[]
+  technology: string
+  imageUrl: string
+}
+
+interface StickerCollection {
+  technology: {
+    id: string
+    name: string
+    description: string
+  }
+  stickers: Sticker[]
+}
 
 function App() {
   const [query, setQuery] = useState('')
+  const [collection, setCollection] = useState<StickerCollection | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [reloadKey, setReloadKey] = useState(0)
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    async function loadCollection() {
+      setLoadError(null)
+
+      try {
+        const response = await fetch(collectionEndpoint, {
+          signal: controller.signal,
+        })
+
+        if (!response.ok) {
+          throw new Error(`Sticker API returned ${response.status}`)
+        }
+
+        const nextCollection = (await response.json()) as StickerCollection
+        setCollection(nextCollection)
+      } catch (error) {
+        if (controller.signal.aborted) return
+
+        setCollection(null)
+        setLoadError(
+          error instanceof Error ? error.message : 'Could not load stickers',
+        )
+      }
+    }
+
+    void loadCollection()
+    return () => controller.abort()
+  }, [reloadKey])
 
   const filteredStickers = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
+    const stickers = collection?.stickers ?? []
 
     if (!normalizedQuery) {
       return stickers
     }
 
     return stickers.filter((sticker) =>
-      `${sticker.name} ${sticker.category}`
+      `${sticker.name} ${sticker.tags.join(' ')}`
         .toLowerCase()
         .includes(normalizedQuery),
     )
-  }, [query])
+  }, [collection, query])
 
   return (
     <div className="min-h-screen bg-surface text-primary">
@@ -167,21 +136,21 @@ function App() {
 
       <main>
         <section className="mx-auto flex min-h-[640px] w-full max-w-4xl flex-col items-center justify-center px-5 py-20 text-center sm:px-8 sm:py-28">
-          <Badge color="discovery" variant="soft" pill>
-            Tech sticker pack · coming soon
+          <Badge color="warning" variant="soft" pill>
+            One tech · eight moods
           </Badge>
 
           <h1 className="heading-4xl mt-7 max-w-3xl text-balance sm:heading-5xl">
-            Your stack deserves better stickers.
+            Cloudflare, but make it emotional.
           </h1>
           <p className="mt-6 max-w-2xl text-balance text-lg text-secondary">
-            React on your laptop. Angular on your bottle. Tiny text stickers for
-            the frameworks, languages, and tools you actually use.
+            A tiny orange cloud for every deploy, cache hit, outage, and
+            “why is production doing that?” moment.
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <ButtonLink as="a" href="#stickers" color="primary" size="lg">
-              Browse stickers
+              Meet the clouds
               <ArrowDown aria-hidden="true" />
             </ButtonLink>
             <ButtonLink
@@ -199,15 +168,18 @@ function App() {
             </ButtonLink>
           </div>
 
-          <div className="mt-14 flex flex-wrap items-center justify-center gap-3" aria-label="Sticker examples">
-            <span className="-rotate-3 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-blue-600 shadow-md">
-              React
+          <div
+            className="mt-14 flex flex-wrap items-center justify-center gap-3"
+            aria-label="Cloudflare technologies"
+          >
+            <span className="-rotate-3 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-orange-600 shadow-md">
+              Workers
             </span>
-            <span className="rotate-2 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-red-600 shadow-md">
-              Angular
+            <span className="rotate-2 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-orange-600 shadow-md">
+              R2
             </span>
-            <span className="-rotate-1 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-blue-700 shadow-md">
-              TypeScript
+            <span className="-rotate-1 rounded-xl border-2 border-black bg-white px-5 py-3 font-mono text-lg font-bold text-orange-600 shadow-md">
+              Pages
             </span>
           </div>
         </section>
@@ -215,21 +187,21 @@ function App() {
         <section className="border-y border-subtle bg-surface-secondary">
           <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-12 sm:grid-cols-3 sm:px-8 sm:py-16">
             <div>
-              <p className="font-medium">Framework favourites</p>
+              <p className="font-medium">One Cloudflare collection</p>
               <p className="mt-2 text-sm text-secondary">
-                React, Angular, Vue, Svelte, and the tools around them.
+                Every sticker is grouped under the same technology, ready to grow.
               </p>
             </div>
             <div>
-              <p className="font-medium">Made for developers</p>
+              <p className="font-medium">Stored in R2</p>
               <p className="mt-2 text-sm text-secondary">
-                Clean type, strong outlines, and a little terminal energy.
+                Original files live in object storage under a clear collection path.
               </p>
             </div>
             <div>
-              <p className="font-medium">Download or install</p>
+              <p className="font-medium">Served by Workers</p>
               <p className="mt-2 text-sm text-secondary">
-                Grab one sticker or add the complete pack from npm.
+                The catalog and images arrive through a small edge API.
               </p>
             </div>
           </div>
@@ -238,15 +210,15 @@ function App() {
         <section id="stickers" className="scroll-mt-2">
           <div className="mx-auto w-full max-w-6xl px-5 pb-4 pt-20 sm:px-8 sm:pt-24">
             <div className="max-w-2xl">
-              <Badge color="secondary" variant="soft" pill>
-                The sticker shelf
+              <Badge color="warning" variant="soft" pill>
+                Cloudflare collection
               </Badge>
               <h2 className="heading-3xl mt-5 text-balance sm:heading-4xl">
-                Find your favourite technology.
+                Pick your current cloud mood.
               </h2>
               <p className="mt-4 text-lg text-secondary">
-                Search the first collection. The artwork is placeholder text for
-                now, ready to be swapped with the final sticker files.
+                Eight reactions, one technology. Search by feeling, incident, or
+                the kind of day your deployment is having.
               </p>
             </div>
           </div>
@@ -257,15 +229,15 @@ function App() {
                 className="w-full sm:max-w-md"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search React, Angular, TypeScript…"
-                aria-label="Search stickers"
+                placeholder="Search deploy, cache, outage…"
+                aria-label="Search Cloudflare stickers"
                 startAdornment={<Search className="size-4" aria-hidden="true" />}
                 size="lg"
                 pill
               />
               <div className="flex items-center justify-between gap-3 sm:ml-auto sm:justify-end">
-                <Badge color="secondary" variant="soft" pill>
-                  All stickers
+                <Badge color="warning" variant="soft" pill>
+                  Cloudflare
                 </Badge>
                 <span className="text-sm text-secondary" aria-live="polite">
                   {filteredStickers.length} result{filteredStickers.length === 1 ? '' : 's'}
@@ -275,30 +247,66 @@ function App() {
           </div>
 
           <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-12">
-            {filteredStickers.length > 0 ? (
+            {!collection && !loadError ? (
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }, (_, index) => (
+                  <div
+                    className="h-96 animate-pulse rounded-3xl bg-surface-secondary"
+                    key={index}
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
+            ) : loadError ? (
+              <div className="grid min-h-80 place-items-center rounded-3xl border border-dashed border-default bg-surface-secondary px-6 text-center">
+                <div>
+                  <p className="heading-lg">The cloud shelf is unavailable</p>
+                  <p className="mt-2 max-w-md text-secondary">
+                    The Cloudflare R2 collection could not be loaded. {loadError}.
+                  </p>
+                  <Button
+                    className="mt-5"
+                    color="secondary"
+                    variant="outline"
+                    onClick={() => setReloadKey((value) => value + 1)}
+                  >
+                    Try again
+                  </Button>
+                </div>
+              </div>
+            ) : filteredStickers.length > 0 ? (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredStickers.map((sticker) => (
                   <article
                     className="group rounded-3xl border border-subtle bg-surface p-3 shadow-sm transition duration-basic hover:-translate-y-0.5 hover:shadow-md"
-                    key={sticker.name}
+                    key={sticker.id}
                   >
-                    <div className="grid aspect-[4/3] place-items-center overflow-hidden rounded-2xl bg-surface-secondary p-6">
-                      <div
-                        className={`${sticker.tilt} max-w-full rounded-xl border-[3px] border-black bg-white px-5 py-4 text-center font-mono text-xl font-bold tracking-tight shadow-md transition duration-basic group-hover:rotate-0 sm:text-2xl ${sticker.color}`}
-                      >
-                        {sticker.displayName}
-                      </div>
+                    <div className="grid aspect-[4/3] place-items-center overflow-hidden rounded-2xl bg-surface-secondary p-5">
+                      <img
+                        className="h-full w-full object-contain transition duration-basic group-hover:scale-[1.03]"
+                        src={sticker.imageUrl}
+                        alt={`${sticker.name} Cloudflare sticker`}
+                        loading="lazy"
+                      />
                     </div>
                     <div className="flex items-center justify-between gap-3 px-2 pb-2 pt-4">
-                      <div>
-                        <h3 className="font-medium">{sticker.name}</h3>
+                      <div className="min-w-0">
+                        <h3 className="truncate font-medium">{sticker.name}</h3>
                         <p className="mt-0.5 text-sm text-secondary">
-                          {sticker.category}
+                          {collection?.technology.name ?? 'Cloudflare'}
                         </p>
                       </div>
-                      <Badge color="discovery" variant="soft" pill>
-                        Soon
-                      </Badge>
+                      <ButtonLink
+                        as="a"
+                        href={sticker.imageUrl}
+                        download={sticker.file}
+                        color="secondary"
+                        variant="ghost"
+                        size="sm"
+                      >
+                        <Download aria-hidden="true" />
+                        Download
+                      </ButtonLink>
                     </div>
                   </article>
                 ))}
@@ -306,9 +314,9 @@ function App() {
             ) : (
               <div className="grid min-h-80 place-items-center rounded-3xl border border-dashed border-default bg-surface-secondary px-6 text-center">
                 <div>
-                  <p className="heading-lg">No sticker found</p>
+                  <p className="heading-lg">No cloud mood found</p>
                   <p className="mt-2 text-secondary">
-                    Try another framework, language, or tool.
+                    Try another feeling, event, or Cloudflare term.
                   </p>
                 </div>
               </div>
@@ -317,12 +325,12 @@ function App() {
         </section>
 
         <section className="border-t border-subtle">
-          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 py-20 text-center sm:px-8 sm:py-24">
+          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 py-20 text-center sm:px-8">
             <Badge color="info" variant="soft" pill>
               npm package coming later
             </Badge>
-            <h2 className="heading-3xl mt-5 text-balance">
-              One command. The whole sticker drawer.
+            <h2 className="heading-3xl mt-5 text-balance sm:heading-4xl">
+              One command. The whole cloud crew.
             </h2>
             <p className="mt-4 max-w-xl text-secondary">
               The package is not published yet, but the install flow is ready for
@@ -356,7 +364,7 @@ function App() {
       <footer className="border-t border-subtle">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-6 text-sm text-tertiary sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <span>© 2026 stickers</span>
-          <span>Built for the tools you love.</span>
+          <span>Stored and served on Cloudflare.</span>
         </div>
       </footer>
     </div>

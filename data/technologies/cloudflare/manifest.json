@@ -1,0 +1,57 @@
+{
+  "technology": {
+    "id": "cloudflare",
+    "name": "Cloudflare",
+    "description": "Cloud moods for deploys, cache hits, incidents, and everything in between."
+  },
+  "stickers": [
+    {
+      "id": "launch-mode",
+      "name": "Launch mode",
+      "file": "launch-mode.png",
+      "tags": ["rocket", "deploy", "excited"]
+    },
+    {
+      "id": "thinking",
+      "name": "Thinking…",
+      "file": "thinking.png",
+      "tags": ["thinking", "questions", "debugging"]
+    },
+    {
+      "id": "everything-is-down",
+      "name": "Everything is down",
+      "file": "everything-is-down.png",
+      "tags": ["crying", "incident", "outage"]
+    },
+    {
+      "id": "cloud-royalty",
+      "name": "Cloud royalty",
+      "file": "cloud-royalty.png",
+      "tags": ["crown", "confident", "success"]
+    },
+    {
+      "id": "deploy-party",
+      "name": "Deploy party",
+      "file": "deploy-party.png",
+      "tags": ["party", "celebration", "launch"]
+    },
+    {
+      "id": "suspicious-traffic",
+      "name": "Suspicious traffic",
+      "file": "suspicious-traffic.png",
+      "tags": ["side-eye", "security", "traffic"]
+    },
+    {
+      "id": "just-caching-around",
+      "name": "Just caching around",
+      "file": "just-caching-around.png",
+      "tags": ["silly", "cache", "fun"]
+    },
+    {
+      "id": "cache-hit",
+      "name": "Cache hit",
+      "file": "cache-hit.png",
+      "tags": ["sunglasses", "cool", "cache"]
+    }
+  ]
+}

@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Sticker source files are uploaded to R2 and kept out of Git.
+sticker-assets/**/*.png
+.wrangler/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
