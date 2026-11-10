@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Badge } from '@openai/apps-sdk-ui/components/Badge'
 import {
   Button,
   ButtonLink,
@@ -186,10 +185,38 @@ function App() {
           <h1 className="max-w-xl text-balance text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
             Your tech stack has feelings too.
           </h1>
-          <p className="mt-5 max-w-2xl text-balance text-lg text-secondary">
+          <p className="mt-5 max-w-2xl text-balance font-mono text-sm leading-6 text-secondary">
             Download expressive stickers for deploys, type errors, rerenders,
             clean builds, and every “why is production doing that?” moment.
           </p>
+          <div className="mt-7 flex w-full max-w-2xl flex-col items-center justify-center gap-3 sm:flex-row">
+            <ButtonLink as="a" href="#stickers" color="primary" size="lg">
+              <Download aria-hidden="true" />
+              Download
+            </ButtonLink>
+            <span className="text-sm text-tertiary">or</span>
+            <div className="flex w-full items-center gap-2 rounded-xl border border-default bg-surface-secondary p-2 pl-4 shadow-sm sm:max-w-md">
+              <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-left font-mono text-sm">
+                {installCommand}
+              </code>
+              <CopyButton
+                copyValue={installCommand}
+                color="secondary"
+                variant="ghost"
+                size="lg"
+                uniform
+                aria-label="Copy npm install command"
+              >
+                {({ copied }) =>
+                  copied ? (
+                    <Check aria-hidden="true" />
+                  ) : (
+                    <Copy aria-hidden="true" />
+                  )
+                }
+              </CopyButton>
+            </div>
+          </div>
         </section>
 
         <section id="stickers" className="scroll-mt-2">
@@ -301,41 +328,6 @@ function App() {
           </div>
         </section>
 
-        <section className="border-t border-subtle">
-          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 py-20 text-center sm:px-8">
-            <Badge color="info" variant="soft" pill>
-              npm package coming later
-            </Badge>
-            <h2 className="heading-3xl mt-5 text-balance sm:heading-4xl">
-              One command. The whole tech crew.
-            </h2>
-            <p className="mt-4 max-w-xl text-secondary">
-              The package is not published yet, but the install flow is ready for
-              launch day.
-            </p>
-            <div className="mt-8 flex w-full max-w-xl items-center gap-3 rounded-xl border border-default bg-surface-secondary p-2 pl-4 shadow-sm">
-              <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-left font-mono text-sm">
-                {installCommand}
-              </code>
-              <CopyButton
-                copyValue={installCommand}
-                color="secondary"
-                variant="ghost"
-                size="lg"
-                uniform
-                aria-label="Copy npm install command"
-              >
-                {({ copied }) =>
-                  copied ? (
-                    <Check aria-hidden="true" />
-                  ) : (
-                    <Copy aria-hidden="true" />
-                  )
-                }
-              </CopyButton>
-            </div>
-          </div>
-        </section>
       </main>
 
       <footer className="border-t border-subtle">
